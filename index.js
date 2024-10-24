@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
 
 const app = express();
 
@@ -8,32 +9,36 @@ app.use(express.json());
 
 app.listen(5500, () => console.log('Rodando na porta 5500'));
 
-let gastos = [
-  {
-    id: 1,
-    tipo: "Alimentação",
-    valor: 50.00,
-    data: "2024-10-09"
+// Função para carregar os dados de um arquivo JSON
+function loadData(filePath) {
+  try {
+    const dataBuffer = fs.readFileSync(filePath);
+    return JSON.parse(dataBuffer.toString());
+  } catch (error) {
+    return []; // Retorna array vazio se o arquivo não existir
   }
-];
+}
 
-let lucros = [
-  {
-    id: 1,
-    tipo: "Salário",
-    valor: 2000.00,
-    data: "2024-10-01"
-  }
-];
+// Função para salvar os dados em um arquivo JSON
+function saveData(filePath, data) {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2)); // Salva os dados formatados
+}
 
+// Carregar os dados iniciais dos arquivos JSON
+let gastos = loadData('gastos.json');
+let lucros = loadData('lucros.json');
+
+// Rota para obter todos os dados (gastos e lucros)
 app.route('/api/todos').get((req, res) => {
   res.json({ gastos, lucros });
 });
 
+// Rota para obter todos os gastos
 app.route('/api/gastos').get((req, res) => {
   res.json({ gastos });
 });
 
+// Rota para obter um gasto específico por ID
 app.route('/api/gastos/:id').get((req, res) => {
   const gastoId = req.params.id;
   const gasto = gastos.find(g => Number(g.id) === Number(gastoId));
@@ -45,11 +50,12 @@ app.route('/api/gastos/:id').get((req, res) => {
   res.json(gasto);
 });
 
+// Rota para adicionar um novo gasto
 app.route('/api/gastos').post((req, res) => {
   const { tipo, valor, data } = req.body;
 
   if (!tipo || valor === undefined || !data) {
-    return res.status(400).json('Todos os campos são obrigatórios: tipo, valor e data!'); // 400 Bad Request
+    return res.status(400).json('Todos os campos são obrigatórios: tipo, valor e data!');
   }
 
   const lastId = gastos.length > 0 ? gastos[gastos.length - 1].id : 0;
@@ -62,9 +68,12 @@ app.route('/api/gastos').post((req, res) => {
   };
 
   gastos.push(newGasto);
+  saveData('gastos.json', gastos); // Salvar os gastos atualizados no arquivo
+
   res.status(201).json('Gasto salvo com sucesso!');
 });
 
+// Rota para atualizar um gasto existente
 app.route('/api/gastos/:id').put((req, res) => {
   const gastoId = req.params.id;
   const gasto = gastos.find(g => Number(g.id) === Number(gastoId));
@@ -76,7 +85,7 @@ app.route('/api/gastos/:id').put((req, res) => {
   const { tipo, valor, data } = req.body;
 
   if (!tipo || valor === undefined || !data) {
-    return res.status(400).json('Todos os campos são obrigatórios: tipo, valor e data!'); // 400 Bad Request
+    return res.status(400).json('Todos os campos são obrigatórios: tipo, valor e data!');
   }
 
   const updatedGasto = {
@@ -87,10 +96,12 @@ app.route('/api/gastos/:id').put((req, res) => {
   };
 
   gastos = gastos.map(g => (Number(g.id) === Number(gastoId) ? updatedGasto : g));
+  saveData('gastos.json', gastos); // Salvar os gastos atualizados no arquivo
 
-  res.json("Gasto atualizado com sucesso!");
+  res.json('Gasto atualizado com sucesso!');
 });
 
+// Rota para deletar um gasto
 app.route('/api/gastos/:id').delete((req, res) => {
   const gastoId = req.params.id;
 
@@ -100,14 +111,17 @@ app.route('/api/gastos/:id').delete((req, res) => {
   }
 
   gastos = gastos.filter(g => Number(g.id) !== Number(gastoId));
+  saveData('gastos.json', gastos); // Salvar os gastos atualizados no arquivo
 
   res.json('Gasto deletado com sucesso!');
 });
 
+// Rota para obter todos os lucros
 app.route('/api/lucros').get((req, res) => {
   res.json({ lucros });
 });
 
+// Rota para obter um lucro específico por ID
 app.route('/api/lucros/:id').get((req, res) => {
   const lucroId = req.params.id;
   const lucro = lucros.find(l => Number(l.id) === Number(lucroId));
@@ -119,11 +133,12 @@ app.route('/api/lucros/:id').get((req, res) => {
   res.json(lucro);
 });
 
+// Rota para adicionar um novo lucro
 app.route('/api/lucros').post((req, res) => {
   const { tipo, valor, data } = req.body;
 
   if (!tipo || valor === undefined || !data) {
-    return res.status(400).json('Todos os campos são obrigatórios: tipo, valor e data!'); // 400 Bad Request
+    return res.status(400).json('Todos os campos são obrigatórios: tipo, valor e data!');
   }
 
   const lastId = lucros.length > 0 ? lucros[lucros.length - 1].id : 0;
@@ -136,9 +151,12 @@ app.route('/api/lucros').post((req, res) => {
   };
 
   lucros.push(newLucro);
+  saveData('lucros.json', lucros); // Salvar os lucros atualizados no arquivo
+
   res.status(201).json('Lucro salvo com sucesso!');
 });
 
+// Rota para atualizar um lucro existente
 app.route('/api/lucros/:id').put((req, res) => {
   const lucroId = req.params.id;
   const lucro = lucros.find(l => Number(l.id) === Number(lucroId));
@@ -150,7 +168,7 @@ app.route('/api/lucros/:id').put((req, res) => {
   const { tipo, valor, data } = req.body;
 
   if (!tipo || valor === undefined || !data) {
-    return res.status(400).json('Todos os campos são obrigatórios: tipo, valor e data!'); // 400 Bad Request
+    return res.status(400).json('Todos os campos são obrigatórios: tipo, valor e data!');
   }
 
   const updatedLucro = {
@@ -161,10 +179,12 @@ app.route('/api/lucros/:id').put((req, res) => {
   };
 
   lucros = lucros.map(l => (Number(l.id) === Number(lucroId) ? updatedLucro : l));
+  saveData('lucros.json', lucros); // Salvar os lucros atualizados no arquivo
 
-  res.json("Lucro atualizado com sucesso!");
+  res.json('Lucro atualizado com sucesso!');
 });
 
+// Rota para deletar um lucro
 app.route('/api/lucros/:id').delete((req, res) => {
   const lucroId = req.params.id;
 
@@ -174,6 +194,7 @@ app.route('/api/lucros/:id').delete((req, res) => {
   }
 
   lucros = lucros.filter(l => Number(l.id) !== Number(lucroId));
+  saveData('lucros.json', lucros); // Salvar os lucros atualizados no arquivo
 
   res.json('Lucro deletado com sucesso!');
 });
