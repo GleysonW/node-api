@@ -1,20 +1,38 @@
 [
   {
     "id": 1,
-    "tipo": "1",
-    "valor": "1",
-    "data": "1"
-  },
-  {
-    "id": 2,
-    "tipo": "2",
-    "valor": "2",
-    "data": "2"
+    "tipo": "Insumos",
+    "valor": "300",
+    "data": "13/11/2024"
   },
   {
     "id": 3,
-    "tipo": "3",
-    "valor": "3",
-    "data": "3"
+    "tipo": "Outro",
+    "valor": "880",
+    "data": "12/11/2024"
+  },
+  {
+    "id": 4,
+    "tipo": "Insumos",
+    "valor": "440",
+    "data": "11/11/2024"
+  },
+  {
+    "id": 5,
+    "tipo": "Insumos",
+    "valor": "300",
+    "data": "05/11/2024"
+  },
+  {
+    "id": 6,
+    "tipo": "Transporte",
+    "valor": "100",
+    "data": "13/11/2024"
+  },
+  {
+    "id": 7,
+    "tipo": "Insumos",
+    "valor": "200",
+    "data": "28/11/2024"
   }
 ]
