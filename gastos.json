@@ -28,11 +28,5 @@
     "tipo": "Transporte",
     "valor": "100",
     "data": "13/11/2024"
-  },
-  {
-    "id": 7,
-    "tipo": "Insumos",
-    "valor": "200",
-    "data": "28/11/2024"
   }
 ]

@@ -6,13 +6,6 @@
   "scripts": {
     "start": "nodemon ."
   },
-  "keywords": [],
-  "author": "Jakeliny Gracielly",
-  "license": "ISC",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.17.1"
-  },
   "devDependencies": {
     "nodemon": "^2.0.13"
   }
